@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+./relay_test.py --points=10   --threads=4
+./relay_test.py --points=100  --threads=4
+./relay_test.py --points=1000 --threads=4
+./relay_test.py --points=10   --threads=8
+./relay_test.py --points=100  --threads=8
+./relay_test.py --points=1000 --threads=8
+./relay_test.py --points=10   --threads=16
+./relay_test.py --points=100  --threads=16
+./relay_test.py --points=1000 --threads=16
+

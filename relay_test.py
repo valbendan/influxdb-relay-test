@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import time
 import threading
 import random
@@ -22,21 +25,25 @@ def generate_fake_data(points):  # type: (int) -> list(dict)
     ]
 
 
-def do_influx_request(n_points, host, database):  # type: (int, str, str) -> None
+def do_influx_request(n_points, host, database):  # type: (int, str, str) -> float
     conn = InfluxDBClient(host=host)
     conn.switch_database('p2')
     points = generate_fake_data(n_points)
+    request_start_time = time.time()
     conn.write_points(points, time_precision='u', database=database)
+    return time.time() - request_start_time
 
 
 def thread_run_request(points, seconds, host, database):  # type: (int, int, str, str) -> None
     end_time = time.time() + seconds
-    request_count = 0  # type: int
+    total_request_count = 0  # type: int
+    total_request_time = 0.0  # type: float
     while time.time() < end_time:
         # do request
-        do_influx_request(points, host, database)
-        request_count += 1
-    print('request %d in %d seconds with %d points!' % (request_count, seconds, points))
+        total_request_time += do_influx_request(points, host, database)
+        total_request_count += 1
+    print('Total points: %d\tTotal request: %d\tAvg request time: %f' %
+          (total_request_count * points, total_request_count, total_request_time / total_request_count))
 
 
 @click.command()
